@@ -1,10 +1,9 @@
 """
-Module for Patron class and related functionality.
+Data management module for patron data.
 """
-
 from datetime import datetime, timedelta
+from src.borrowable_item import BorrowableItem
 from src.loan import Loan
-from src import search
 
 
 class Patron:
@@ -18,6 +17,8 @@ class Patron:
                  gardening_tool_training=False,
                  carpentry_tool_training=False,
                  makerspace_training=False):
+        # pylint: disable=too-many-arguments
+        # Eight parameters are necessary for complete patron initialization
         """
         Initialize a Patron.
 
@@ -134,8 +135,7 @@ class Patron:
             Remaining balance after payment
         """
         self._outstanding_fees -= amount
-        if self._outstanding_fees < 0:
-            self._outstanding_fees = 0
+        self._outstanding_fees = max(self._outstanding_fees, 0)
         return self._outstanding_fees
 
     def __str__(self):
@@ -161,3 +161,74 @@ class Patron:
         else:
             result += "  No current loans\n"
         return result
+
+
+class DataManager:
+    """
+    Manages patron and catalogue data for the library system.
+    """
+
+    def __init__(self):
+        """Initialize the DataManager with empty data structures."""
+        self._patron_data = {}
+        self._catalogue_data = {}
+
+    def add_patron(self, patron):
+        """
+        Add a patron to the data manager.
+
+        Args:
+            patron: Patron object to add
+        """
+        self._patron_data[patron._id] = patron
+
+    def get_patron(self, patron_id):
+        """
+        Retrieve a patron by ID.
+
+        Args:
+            patron_id: ID of the patron to retrieve
+
+        Returns:
+            Patron object or None if not found
+        """
+        return self._patron_data.get(patron_id)
+
+    def add_item(self, item):
+        """
+        Add an item to the catalogue.
+
+        Args:
+            item: BorrowableItem to add
+        """
+        self._catalogue_data[item._id] = item
+
+    def get_item(self, item_id):
+        """
+        Retrieve an item by ID.
+
+        Args:
+            item_id: ID of the item to retrieve
+
+        Returns:
+            BorrowableItem or None if not found
+        """
+        return self._catalogue_data.get(item_id)
+
+    def get_all_patrons(self):
+        """
+        Get all patrons.
+
+        Returns:
+            List of all Patron objects
+        """
+        return list(self._patron_data.values())
+
+    def get_all_items(self):
+        """
+        Get all catalogue items.
+
+        Returns:
+            List of all BorrowableItem objects
+        """
+        return list(self._catalogue_data.values())

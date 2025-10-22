@@ -1,5 +1,5 @@
 """
-Module for BorrowableItem class.
+Borrowable item module for library system.
 """
 
 
@@ -8,7 +8,9 @@ class BorrowableItem:
     Represents an item that can be borrowed from the library.
     """
 
-    def __init__(self, item_id, name, item_type, year, number_owned):
+    def __init__(self, item_id, name, item_type, num_copies=1, on_loan=0, location="Main Library"):
+        # pylint: disable=too-many-arguments
+        # Six parameters are necessary for complete item initialization
         """
         Initialize a BorrowableItem.
 
@@ -16,40 +18,30 @@ class BorrowableItem:
             item_id: Unique identifier for the item
             name: Name of the item
             item_type: Type/category of the item
-            year: Year of publication/creation
-            number_owned: Total number of copies owned
+            num_copies: Total number of copies available
+            on_loan: Number of copies currently on loan
+            location: Physical location of the item
         """
         self._id = item_id
         self._name = name
         self._type = item_type
-        self._year = year
-        self._number_owned = number_owned
-        self._on_loan = 0
+        self._num_copies = num_copies
+        self._on_loan = on_loan
+        self._location = location
 
-    @property
-    def available(self):
-        """Check if item is available for loan."""
-        return self._number_owned - self._on_loan > 0
+    def is_available(self):
+        """
+        Check if the item is available for loan.
 
-    def to_short_string(self):
-        """Return a short string representation of the item."""
-        return f"{self._type}: {self._name} ({self._year})"
-
-    def to_full_string(self):
-        """Return a full string representation of the item."""
-        available_count = self._number_owned - self._on_loan
-        return (
-            f"{self._type}: {self._name} ({self._year}) - "
-            f"{available_count}/{self._number_owned} available"
-        )
+        Returns:
+            Boolean indicating availability
+        """
+        return self._on_loan < self._num_copies
 
     def __str__(self):
         """String representation of the item."""
-        return self.to_short_string()
-
-    def __repr__(self):
-        """Developer-friendly representation of the item."""
+        available = self._num_copies - self._on_loan
         return (
-            f"BorrowableItem(id={self._id}, name='{self._name}', "
-            f"type='{self._type}', year={self._year})"
+            f"{self._name} (ID: {self._id}, Type: {self._type}, "
+            f"Available: {available}/{self._num_copies}, Location: {self._location})"
         )

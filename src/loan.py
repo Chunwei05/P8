@@ -1,8 +1,7 @@
 """
-Module for Loan class.
+Loan module for library system.
 """
-
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 class Loan:
@@ -16,19 +15,15 @@ class Loan:
 
         Args:
             item: The BorrowableItem being loaned
-            due_date: The date the item is due to be returned
+            due_date: Date when the loan is due
         """
         self._item = item
-        if isinstance(due_date, str):
-            self._due_date = datetime.strptime(
-                due_date, "%Y-%m-%d"
-            ).date()
-        else:
-            self._due_date = due_date
+        self._due_date = due_date
 
     def __str__(self):
         """String representation of the loan."""
-        return (
-            f"{self._item.to_short_string()} "
-            f"(due: {self._due_date})"
-        )
+        today = datetime.now().date()
+        if self._due_date < today:
+            days_overdue = (today - self._due_date).days
+            return f"{self._item._name} (OVERDUE by {days_overdue} days)"
+        return f"{self._item._name} (Due: {self._due_date})"

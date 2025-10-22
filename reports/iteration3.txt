@@ -1,0 +1,233 @@
+************* Module src.bat
+src/bat.py:15:4: C0103: Variable name "ui" doesn't conform to snake_case naming style (invalid-name)
+src/bat.py:15:9: W1114: Positional arguments appear to be out of order (arguments-out-of-order)
+src/bat.py:16:4: E1101: Instance of 'BatUi' has no 'run' member (no-member)
+************* Module src.bat_ui
+src/bat_ui.py:85:12: W0212: Access to a protected member _patron_data of a client class (protected-access)
+src/bat_ui.py:97:12: W0212: Access to a protected member _patron_data of a client class (protected-access)
+src/bat_ui.py:113:12: W0212: Access to a protected member _patron_data of a client class (protected-access)
+src/bat_ui.py:132:12: W0212: Access to a protected member _patron_data of a client class (protected-access)
+src/bat_ui.py:152:12: W0212: Access to a protected member _catalogue_data of a client class (protected-access)
+src/bat_ui.py:164:12: W0212: Access to a protected member _patron_data of a client class (protected-access)
+src/bat_ui.py:185:12: W0212: Access to a protected member _patron_data of a client class (protected-access)
+src/bat_ui.py:193:15: W0212: Access to a protected member _loans of a client class (protected-access)
+src/bat_ui.py:198:20: W0212: Access to a protected member _loans of a client class (protected-access)
+src/bat_ui.py:199:29: W0212: Access to a protected member _id of a client class (protected-access)
+src/bat_ui.py:199:29: W0212: Access to a protected member _item of a client class (protected-access)
+src/bat_ui.py:199:53: W0212: Access to a protected member _item of a client class (protected-access)
+src/bat_ui.py:218:12: W0212: Access to a protected member _patron_data of a client class (protected-access)
+src/bat_ui.py:241:12: W0212: Access to a protected member _patron_data of a client class (protected-access)
+src/bat_ui.py:251:16: W0212: Access to a protected member _outstanding_fees of a client class (protected-access)
+src/bat_ui.py:254:11: W0212: Access to a protected member _outstanding_fees of a client class (protected-access)
+src/bat_ui.py:260:21: W0212: Access to a protected member _outstanding_fees of a client class (protected-access)
+src/bat_ui.py:262:12: W0212: Access to a protected member _outstanding_fees of a client class (protected-access)
+************* Module src.business_logic
+src/business_logic.py:29:11: W0212: Access to a protected member _on_loan of a client class (protected-access)
+src/business_logic.py:29:28: W0212: Access to a protected member _num_copies of a client class (protected-access)
+src/business_logic.py:36:15: W0212: Access to a protected member _loans of a client class (protected-access)
+src/business_logic.py:40:11: W0212: Access to a protected member _outstanding_fees of a client class (protected-access)
+src/business_logic.py:44:20: W0212: Access to a protected member _type of a client class (protected-access)
+src/business_logic.py:48:11: W0212: Access to a protected member _age of a client class (protected-access)
+src/business_logic.py:53:49: W0212: Access to a protected member _gardening_tool_training of a client class (protected-access)
+src/business_logic.py:56:49: W0212: Access to a protected member _carpentry_tool_training of a client class (protected-access)
+src/business_logic.py:60:20: W0212: Access to a protected member _loans of a client class (protected-access)
+src/business_logic.py:61:15: W0212: Access to a protected member _type of a client class (protected-access)
+src/business_logic.py:61:15: W0212: Access to a protected member _item of a client class (protected-access)
+src/business_logic.py:14:4: R0911: Too many return statements (11/6) (too-many-return-statements)
+src/business_logic.py:14:4: R0912: Too many branches (13/12) (too-many-branches)
+src/business_logic.py:111:53: W0212: Access to a protected member _type of a client class (protected-access)
+src/business_logic.py:173:11: W0212: Access to a protected member _age of a client class (protected-access)
+src/business_logic.py:177:15: W0212: Access to a protected member _makerspace_training of a client class (protected-access)
+src/business_logic.py:5:0: W0611: Unused Loan imported from src.loan (unused-import)
+************* Module src.data_mgmt
+src/data_mgmt.py:80:15: W0212: Access to a protected member _id of a client class (protected-access)
+src/data_mgmt.py:80:15: W0212: Access to a protected member _item of a client class (protected-access)
+src/data_mgmt.py:82:16: W0212: Access to a protected member _item of a client class (protected-access)
+src/data_mgmt.py:97:15: W0212: Access to a protected member _id of a client class (protected-access)
+src/data_mgmt.py:97:15: W0212: Access to a protected member _item of a client class (protected-access)
+src/data_mgmt.py:112:15: W0212: Access to a protected member _due_date of a client class (protected-access)
+src/data_mgmt.py:113:40: W0212: Access to a protected member _due_date of a client class (protected-access)
+src/data_mgmt.py:183:26: W0212: Access to a protected member _id of a client class (protected-access)
+src/data_mgmt.py:204:29: W0212: Access to a protected member _id of a client class (protected-access)
+src/data_mgmt.py:5:0: W0611: Unused BorrowableItem imported from src.borrowable_item (unused-import)
+************* Module src.loan
+src/loan.py:7:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module src.patron
+src/patron.py:80:15: W0212: Access to a protected member _id of a client class (protected-access)
+src/patron.py:80:15: W0212: Access to a protected member _item of a client class (protected-access)
+src/patron.py:82:16: W0212: Access to a protected member _item of a client class (protected-access)
+src/patron.py:97:15: W0212: Access to a protected member _id of a client class (protected-access)
+src/patron.py:97:15: W0212: Access to a protected member _item of a client class (protected-access)
+src/patron.py:112:15: W0212: Access to a protected member _due_date of a client class (protected-access)
+src/patron.py:113:40: W0212: Access to a protected member _due_date of a client class (protected-access)
+src/patron.py:5:0: W0611: Unused BorrowableItem imported from src.borrowable_item (unused-import)
+************* Module src.search
+src/search.py:18:11: W0212: Access to a protected member _name of a client class (protected-access)
+src/search.py:35:11: W0212: Access to a protected member _id of a client class (protected-access)
+src/search.py:53:11: W0212: Access to a protected member _age of a client class (protected-access)
+src/search.py:72:12: W0212: Access to a protected member _name of a client class (protected-access)
+src/search.py:73:16: W0212: Access to a protected member _age of a client class (protected-access)
+src/search.py:90:11: W0212: Access to a protected member _id of a client class (protected-access)
+************* Module src.user_input
+src/user_input.py:1:0: R0801: Similar lines in 2 files
+==src.data_mgmt:[8:165]
+==src.patron:[8:163]
+class Patron:
+    """
+    Represents a library patron.
+    """
+    # pylint: disable=too-many-instance-attributes
+    # Eight attributes are necessary for patron management
+
+    def __init__(self, patron_id, name, age, outstanding_fees=0.0,
+                 gardening_tool_training=False,
+                 carpentry_tool_training=False,
+                 makerspace_training=False):
+        # pylint: disable=too-many-arguments
+        # Eight parameters are necessary for complete patron initialization
+        """
+        Initialize a Patron.
+
+        Args:
+            patron_id: Unique identifier for the patron
+            name: Patron's name
+            age: Patron's age
+            outstanding_fees: Amount of fees owed
+            gardening_tool_training: Whether patron has gardening training
+            carpentry_tool_training: Whether patron has carpentry training
+            makerspace_training: Whether patron has makerspace training
+        """
+        self._id = patron_id
+        self._name = name
+        self._age = age
+        self._outstanding_fees = outstanding_fees
+        self._gardening_tool_training = gardening_tool_training
+        self._carpentry_tool_training = carpentry_tool_training
+        self._makerspace_training = makerspace_training
+        self._loans = []
+
+    def get_type(self):
+        """
+        Determine the patron type based on age.
+
+        Returns:
+            String representing patron type
+        """
+        if self._age < 18:
+            return "Minor"
+        if self._age >= 65:
+            return "Elderly"
+        return "Regular"
+
+    def add_loan(self, item, due_days=14):
+        """
+        Add a loan to the patron's record.
+
+        Args:
+            item: The BorrowableItem being loaned
+            due_days: Number of days until due (default 14)
+        """
+        due_date = datetime.now().date() + timedelta(days=due_days)
+        loan = Loan(item, due_date)
+        self._loans.append(loan)
+        item._on_loan += 1
+
+    def return_item(self, item_id):
+        """
+        Return an item and remove it from loans.
+
+        Args:
+            item_id: ID of the item being returned
+
+        Returns:
+            True if item was found and returned, False otherwise
+        """
+        for loan in self._loans:
+            if loan._item._id == item_id:
+                self._loans.remove(loan)
+                loan._item._on_loan -= 1
+                return True
+        return False
+
+    def has_item(self, patron_id):
+        """
+        Check if patron has a specific item on loan.
+
+        Args:
+            patron_id: ID to check (note: parameter name should be item_id)
+
+        Returns:
+            True if patron has the item, False otherwise
+        """
+        for loan in self._loans:
+            if loan._item._id == patron_id:
+                return True
+        return False
+
+    def calculate_overdue_fees(self):
+        """
+        Calculate total overdue fees for all loans.
+
+        Returns:
+            Total overdue fees as float
+        """
+        total_fees = 0.0
+        today = datetime.now().date()
+
+        for loan in self._loans:
+            if loan._due_date < today:
+                days_overdue = (today - loan._due_date).days
+                total_fees += days_overdue * 1.0
+
+        return total_fees
+
+    def add_fee(self, amount):
+        """
+        Add a fee to the patron's outstanding fees.
+
+        Args:
+            amount: Fee amount to add
+        """
+        self._outstanding_fees += amount
+
+    def pay_fee(self, amount):
+        """
+        Pay off some or all outstanding fees.
+
+        Args:
+            amount: Amount to pay
+
+        Returns:
+            Remaining balance after payment
+        """
+        self._outstanding_fees -= amount
+        self._outstanding_fees = max(self._outstanding_fees, 0)
+        return self._outstanding_fees
+
+    def __str__(self):
+        """String representation of the patron."""
+        loan_count = len(self._loans)
+        return (
+            f"{self._name} (ID: {self._id}, Age: {self._age}, "
+            f"Loans: {loan_count}, Fees: ${self._outstanding_fees:.2f})"
+        )
+
+    def to_full_string(self):
+        """
+        Full string representation including all loans.
+
+        Returns:
+            Detailed string with patron info and loans
+        """
+        result = str(self) + "\n"
+        if self._loans:
+            result += "  Current loans:\n"
+            for loan in self._loans:
+                result += f"    - {loan}\n"
+        else:
+            result += "  No current loans\n"
+        return result (duplicate-code)
+
+------------------------------------------------------------------
+Your code has been rated at 8.49/10 (previous run: 8.49/10, +0.00)
+

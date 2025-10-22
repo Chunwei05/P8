@@ -1,10 +1,9 @@
 """
-Module for Patron class and related functionality.
+Patron module for library system.
 """
-
 from datetime import datetime, timedelta
+from src.borrowable_item import BorrowableItem
 from src.loan import Loan
-from src import search
 
 
 class Patron:
@@ -18,6 +17,8 @@ class Patron:
                  gardening_tool_training=False,
                  carpentry_tool_training=False,
                  makerspace_training=False):
+        # pylint: disable=too-many-arguments
+        # Eight parameters are necessary for complete patron initialization
         """
         Initialize a Patron.
 
@@ -134,8 +135,7 @@ class Patron:
             Remaining balance after payment
         """
         self._outstanding_fees -= amount
-        if self._outstanding_fees < 0:
-            self._outstanding_fees = 0
+        self._outstanding_fees = max(self._outstanding_fees, 0)
         return self._outstanding_fees
 
     def __str__(self):
