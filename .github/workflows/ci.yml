@@ -1,4 +1,4 @@
-name: BAT CI - Static Analysis
+name: BAT Tests and Static Analysis
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main, master ]
 
 jobs:
-  static-analysis:
+  test-and-analyze:
     runs-on: ubuntu-latest
     
     steps:
@@ -25,24 +25,19 @@ jobs:
         pip install pylint pycodestyle pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     
-    - name: Run tests
+    - name: Run pytest
       run: |
-        pytest || true
+        pytest -v || true
+      continue-on-error: true
     
     - name: Run pylint
       run: |
-        echo "=== Pylint Report ===" > static_analysis_report.txt
-        pylint **/*.py --exit-zero >> static_analysis_report.txt
-        cat static_analysis_report.txt
+        echo "==================== PYLINT REPORT ===================="
+        pylint *.py --score=y --exit-zero || true
+      continue-on-error: true
     
     - name: Run pycodestyle
       run: |
-        echo "=== Pycodestyle Report ===" >> static_analysis_report.txt
-        pycodestyle . >> static_analysis_report.txt || true
-        cat static_analysis_report.txt
-    
-    - name: Upload analysis report
-      uses: actions/upload-artifact@v3
-      with:
-        name: static-analysis-report
-        path: static_analysis_report.txt
+        echo "==================== PYCODESTYLE REPORT ===================="
+        pycodestyle . --statistics || true
+      continue-on-error: true
