@@ -8,6 +8,7 @@ Not to be shared or distributed without permission.
 from src.bat_ui import BatUI
 from src.data_mgmt import DataManager
 
+
 class Bat():
     '''
     This class is responsible for initialising BAT data and executing
@@ -27,5 +28,5 @@ class Bat():
         while ui.get_current_screen() != "QUIT":
             ui.run_current_screen()
 
-        ui.run_current_screen() # run the quit screen
+        ui.run_current_screen()  # run the quit screen
 
