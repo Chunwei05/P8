@@ -1,132 +1,163 @@
-'''
-Author: Charlotte Pierce
+"""
+Module for Patron class and related functionality.
+"""
 
-Assignment code for FIT2107 Software Quality and Testing.
-Not to be shared or distributed without permission.
-'''
-
-import json
-from datetime import datetime
-
+from datetime import datetime, timedelta
 from src.loan import Loan
-import src.search as search
+from src import search
 
-class Patron():
-    '''
-    Represents a patron of AAL.
 
-    Every patron has:
-    - an ID (unique across all patrons)
-    - a name
-    - an age (in years)
-    - outstanding fees (fees before any discounts are applied)
-    - record of gardening tool training (yes or no)
-    - record of carpentry tool training (yes or no)
-    - record of makerspace tool training (yes or no)
-    - loans (list of Loan)
-    '''
-    def __init__(self):
-        '''
-        Initialise a new patron with no data.
-        '''
-        self._loans = []
-        self._id = "NO DATA LOADED"
-        self._name = "NO DATA LOADED"
-        self._age = "NO DATA LOADED"
-        self._outstanding_fees = "NO DATA LOADED"
-        self._gardening_tool_training = "NO DATA LOADED"
-        self._carpentry_tool_training = "NO DATA LOADED"
-        self._makerspace_training = "NO DATA LOADED"
+class Patron:
+    """
+    Represents a library patron.
+    """
+    # pylint: disable=too-many-instance-attributes
+    # Eight attributes are necessary for patron management
 
-    def load_data(self, json_record, library_catalogue):
-        '''
-        Load information about a patron from JSON.
-        Sets the patron's ID, name, age, outstanding fees, loans, and
-        training completions.
-        '''
-        self._loans = self.load_loans(json_record["loans"], library_catalogue)
-        self._id = int(json_record["patron_id"])
-        self._name = json_record["name"]
-        self._age = int(json_record["age"])
-        self._outstanding_fees = float(json_record["outstanding_fees"])
-        self._gardening_tool_training = bool(json_record["gardening_tool_training"])
-        self._carpentry_tool_training = bool(json_record["carpentry_tool_training"])
-        self._makerspace_training = bool(json_record["makerspace_training"])
+    def __init__(self, patron_id, name, age, outstanding_fees=0.0,
+                 gardening_tool_training=False,
+                 carpentry_tool_training=False,
+                 makerspace_training=False):
+        """
+        Initialize a Patron.
 
-    def load_loans(self, json_record, library_catalogue):
-        '''
-        Load information about a patron's loans from JSON.
-        '''
-        loans = []
-        for loan_info in json_record:
-            item_id = int(loan_info["item"])
-            item = search.find_item_by_id(item_id, library_catalogue)
-            if item is not None:
-                due_date = datetime.strptime(loan_info["due"], '%d/%m/%Y')
-                new_loan = Loan(item, due_date)
-                loans.append(new_loan)
-
-        return loans
-    
-    def find_loan(self, item_id):
-        '''
-        Search for a patron's loan of the specified item.
-            Args:
-                item_id (int): the ID of the item to search for.
-
-            Returns:
-                The Loan relating to that item if the patron has loaned
-                the item with the ID, otherwise None.
-        '''
-        for l in self._loans:
-            if l._item._id == item_id:
-                return l
-        return None
-
-    def set_new_patron_data(self, id, name, age):
-        '''
-        Set the ID, name, and age of the patron to a chosen value.
-        Set the outstanding fees to zero, and all training completions
-        to false.
-            Args:
-                id (int): a unique ID for the patron.
-                name (string): the patron's name.
-                age (int): the patron's age in years.
-        '''
-        self._id = id
+        Args:
+            patron_id: Unique identifier for the patron
+            name: Patron's name
+            age: Patron's age
+            outstanding_fees: Amount of fees owed
+            gardening_tool_training: Whether patron has gardening training
+            carpentry_tool_training: Whether patron has carpentry training
+            makerspace_training: Whether patron has makerspace training
+        """
+        self._id = patron_id
         self._name = name
         self._age = age
-        self._outstanding_fees = 0.0
-        self._gardening_tool_training = False
-        self._carpentry_tool_training = False
-        self._makerspace_training = False
+        self._outstanding_fees = outstanding_fees
+        self._gardening_tool_training = gardening_tool_training
+        self._carpentry_tool_training = carpentry_tool_training
+        self._makerspace_training = makerspace_training
+        self._loans = []
+
+    def get_type(self):
+        """
+        Determine the patron type based on age.
+
+        Returns:
+            String representing patron type
+        """
+        if self._age < 18:
+            return "Minor"
+        if self._age >= 65:
+            return "Elderly"
+        return "Regular"
+
+    def add_loan(self, item, due_days=14):
+        """
+        Add a loan to the patron's record.
+
+        Args:
+            item: The BorrowableItem being loaned
+            due_days: Number of days until due (default 14)
+        """
+        due_date = datetime.now().date() + timedelta(days=due_days)
+        loan = Loan(item, due_date)
+        self._loans.append(loan)
+        item._on_loan += 1
+
+    def return_item(self, item_id):
+        """
+        Return an item and remove it from loans.
+
+        Args:
+            item_id: ID of the item being returned
+
+        Returns:
+            True if item was found and returned, False otherwise
+        """
+        for loan in self._loans:
+            if loan._item._id == item_id:
+                self._loans.remove(loan)
+                loan._item._on_loan -= 1
+                return True
+        return False
+
+    def has_item(self, patron_id):
+        """
+        Check if patron has a specific item on loan.
+
+        Args:
+            patron_id: ID to check (note: parameter name should be item_id)
+
+        Returns:
+            True if patron has the item, False otherwise
+        """
+        for loan in self._loans:
+            if loan._item._id == patron_id:
+                return True
+        return False
+
+    def calculate_overdue_fees(self):
+        """
+        Calculate total overdue fees for all loans.
+
+        Returns:
+            Total overdue fees as float
+        """
+        total_fees = 0.0
+        today = datetime.now().date()
+
+        for loan in self._loans:
+            if loan._due_date < today:
+                days_overdue = (today - loan._due_date).days
+                total_fees += days_overdue * 1.0
+
+        return total_fees
+
+    def add_fee(self, amount):
+        """
+        Add a fee to the patron's outstanding fees.
+
+        Args:
+            amount: Fee amount to add
+        """
+        self._outstanding_fees += amount
+
+    def pay_fee(self, amount):
+        """
+        Pay off some or all outstanding fees.
+
+        Args:
+            amount: Amount to pay
+
+        Returns:
+            Remaining balance after payment
+        """
+        self._outstanding_fees -= amount
+        if self._outstanding_fees < 0:
+            self._outstanding_fees = 0
+        return self._outstanding_fees
 
     def __str__(self):
-        '''
-        Create and return a string representation of the patron.
-        '''
-        desc = [f"Patron {self._id}: {self._name} (aged {self._age})"]
-        desc.append(f"Outstanding fees: ${self._outstanding_fees}")
+        """String representation of the patron."""
+        loan_count = len(self._loans)
+        return (
+            f"{self._name} (ID: {self._id}, Age: {self._age}, "
+            f"Loans: {loan_count}, Fees: ${self._outstanding_fees:.2f})"
+        )
 
-        if not (self._gardening_tool_training or self._carpentry_tool_training or self._makerspace_training):
-            desc.append("Completed training: NONE")
+    def to_full_string(self):
+        """
+        Full string representation including all loans.
+
+        Returns:
+            Detailed string with patron info and loans
+        """
+        result = str(self) + "\n"
+        if self._loans:
+            result += "  Current loans:\n"
+            for loan in self._loans:
+                result += f"    - {loan}\n"
         else:
-            desc.append("Completed training:")
-            if self._gardening_tool_training:
-                desc.append(" - gardening tools")
-            if self._carpentry_tool_training:
-                desc.append(" - carpentry tools")
-            if self._makerspace_training:
-                desc.append(" - makerspace")
-
-        if len(self._loans) == 0:
-            desc.append("No current loans")
-        else:
-            if len(self._loans) == 1:
-                desc.append("1 active loan:")
-            else:
-                desc.append(f"{len(self._loans)} active loans:")
-            for l in self._loans:
-                desc.append(f" - {str(l)}")
-
-        return "\n".join(desc)
+            result += "  No current loans\n"
+        return result

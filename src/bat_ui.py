@@ -1,270 +1,273 @@
-'''
-Author: Charlotte Pierce
-
-Assignment code for FIT2107 Software Quality and Testing.
-Not to be shared or distributed without permission.
-'''
+"""
+User interface module for the BAT system.
+"""
 
 from src import user_input
-from src import data_mgmt
 from src import search
-from src import business_logic as logic
 
 
-class BatUI():
-    '''
-    This class manages the UI screens of BAT and the transitions between them.
-    '''
+class BatUi:
+    """
+    User interface for the Borrowing Administration Tool.
+    """
 
-    def __init__(self, data_manager):
-        '''
-        Create a new instance of the UI. The initial screen will be
-        set to the main menu screen.
+    def __init__(self, business_logic, data_manager):
+        """
+        Initialize the UI.
 
-            Args:
-                data_manager (DataManager): a data manager with patron
-                    and catalogue data loaded.
-        '''
-        self._current_screen = self._main_menu
-        self._data_manager = data_manager
+        Args:
+            business_logic: BusinessLogic instance
+            data_manager: DataManager instance
+        """
+        self.business_logic = business_logic
+        self.data_manager = data_manager
 
-    def get_current_screen(self):
-        '''
-        Retrieve the current menu screen.
+    def main_menu(self):
+        """Display and handle the main menu."""
+        self.data_manager.load_data()
 
-            Returns:
-                A string representation of the current menu screen. Possible values are
-                "MAIN MENU", "LOAN ITEM", "RETURN ITEM", "SEARCH FOR PATRON", "REGISTER PATRON",
-                "ACCESS MAKERSPACE", and "QUIT".
-        '''
-        match self._current_screen:
-            case self._main_menu:
-                return "MAIN MENU"
-            case self._loan_item:
-                return "LOAN ITEM"
-            case self._return_item:
-                return "RETURN ITEM"
-            case self._search_for_patron:
-                return "SEARCH FOR PATRON"
-            case self._register_patron:
-                return "REGISTER PATRON"
-            case self._access_makerspace:
-                return "ACCESS MAKERSPACE"
-            case self._quit:
-                return "QUIT"
+        while True:
+            print("\n=== BAT Main Menu ===")
+            print("1. Borrow item")
+            print("2. Return item")
+            print("3. Search patrons")
+            print("4. View patron details")
+            print("5. Pay fees")
+            print("6. Exit")
 
-    def run_current_screen(self):
-        '''
-        Run the current menu screen.
-        '''
-        return self._current_screen()
+            choice = user_input.get_menu_choice(
+                "Enter choice: ",
+                ['1', '2', '3', '4', '5', '6']
+            )
 
-    def _main_menu(self):
-        '''
-        The main menu screen of BAT.
-        '''
-        print("\nMAIN MENU")
-        print("=========")
-        print("What would you like to do?")
-        print("1. Loan an item")
-        print("2. Return an item")
-        print("3. Search for a patron")
-        print("4. Register a new patron")
-        print("5. Access makerspace")
-        print("6. Quit")
+            if choice == '1':
+                self.borrow_item()
+            elif choice == '2':
+                self.return_item()
+            elif choice == '3':
+                self.search_patrons()
+            elif choice == '4':
+                self.view_patron_details()
+            elif choice == '5':
+                self.pay_fees()
+            elif choice == '6':
+                self.data_manager.save_data()
+                print("Data saved. Goodbye!")
+                break
 
-        user_choice = user_input.get_int_input(1, 6)
+    def search_patrons(self):
+        """Handle patron search."""
+        print("\n=== Search Patrons ===")
+        print("1. Search by name")
+        print("2. Search by ID")
+        print("3. Search by age")
+        print("4. Search by name and age")
+        print("5. Back to main menu")
 
-        match user_choice:
-            case 1:
-                self._current_screen = self._loan_item
-            case 2:
-                self._current_screen = self._return_item
-            case 3:
-                self._current_screen = self._search_for_patron
-            case 4:
-                self._current_screen = self._register_patron
-            case 5:
-                self._current_screen = self._access_makerspace
-            case 6:
-                self._current_screen = self._quit
+        choice = user_input.get_menu_choice(
+            "Enter choice: ",
+            ['1', '2', '3', '4', '5']
+        )
 
-        return self._current_screen
+        if choice == '1':
+            self.search_by_name()
+        elif choice == '2':
+            self.search_by_id()
+        elif choice == '3':
+            self.search_by_age()
+        elif choice == '4':
+            self.search_by_name_and_age()
 
-    def _loan_item(self):
-        '''
-        The loan item screen of BAT.
-        '''
-        print("\nLOAN ITEM")
-        print("=========")
+    def search_by_name(self):
+        """Search for a patron by name."""
+        name = user_input.get_string_input("Enter patron name: ")
+        patron = search.search_patron_by_name(
+            self.data_manager._patron_data,
+            name
+        )
+        if patron:
+            print(f"\nFound: {patron}")
+        else:
+            print(f"\nNo patron found with name: {name}")
 
-        patron_id = user_input.get_int_input(0, 999999999, "Enter patron ID: ")
-        patron = self._data_manager.get_patron_by_id(patron_id)
+    def search_by_id(self):
+        """Search for a patron by ID."""
+        patron_id = user_input.get_int_input("Enter patron ID: ")
+        patron = search.search_patron_by_id(
+            self.data_manager._patron_data,
+            patron_id
+        )
+        if patron:
+            print(f"\nFound: {patron}")
+        else:
+            print(f"\nNo patron found with ID: {patron_id}")
+
+    def search_by_age(self):
+        """Search for patrons by age."""
+        age = user_input.get_int_input_in_range(
+            "Enter age: ",
+            0,
+            120
+        )
+        patrons = search.search_patron_by_age(
+            self.data_manager._patron_data,
+            age
+        )
+        if patrons:
+            print(f"\nFound {len(patrons)} patron(s):")
+            for patron in patrons:
+                print(f"  - {patron}")
+        else:
+            print(f"\nNo patrons found with age: {age}")
+
+    def search_by_name_and_age(self):
+        """Search for patrons by name and age."""
+        name = user_input.get_string_input("Enter patron name: ")
+        age = user_input.get_int_input_in_range(
+            "Enter age: ",
+            0,
+            120
+        )
+        patrons = search.search_patron_by_name_and_age(
+            self.data_manager._patron_data,
+            name,
+            age
+        )
+        if patrons:
+            print(f"\nFound {len(patrons)} patron(s):")
+            for patron in patrons:
+                print(f"  - {patron}")
+        else:
+            print(
+                f"\nNo patrons found with name "
+                f"'{name}' and age {age}"
+            )
+
+    def borrow_item(self):
+        """Handle borrowing an item."""
+        print("\n=== Borrow Item ===")
+
+        item_id = user_input.get_int_input("Enter item ID: ")
+        item = search.search_item_by_id(
+            self.data_manager._catalogue_data,
+            item_id
+        )
+
+        if item is None:
+            print(f"Item with ID {item_id} not found.")
+            return
+
+        print(f"Item: {item}")
+
+        patron_id = user_input.get_int_input("Enter patron ID: ")
+        patron = search.search_patron_by_id(
+            self.data_manager._patron_data,
+            patron_id
+        )
 
         if patron is None:
-            print("Patron not found.")
-            self._current_screen = self._main_menu
+            print(f"Patron with ID {patron_id} not found.")
+            return
+
+        result = self.business_logic.borrow_item(patron, item)
+
+        if result is True:
+            print("Success! Item borrowed.")
         else:
-            print(f"Patron found: {patron._name}")
+            print(f"Cannot borrow: {result}")
 
-            print("\nAvailable items to loan:")
-            print("1. Book")
-            print("2. Gardening tool")
-            print("3. Carpentry tool")
+    def return_item(self):
+        """Handle returning an item."""
+        print("\n=== Return Item ===")
 
-            item_type = user_input.get_int_input(1, 3)
-
-            print("\nAvailable items:")
-            catalogue = self._data_manager.get_catalogue()
-            for item in catalogue:
-                if item._type == item_type:
-                    print(f"{item._id}: {item._name} ({item._year})")
-
-            item_id = user_input.get_int_input(0, 999999999, "Enter item ID: ")
-            item = self._data_manager.get_item_by_id(item_id)
-
-            if item is None:
-                print("Item not found.")
-            else:
-                loan_allowed = logic.check_loan_allowed(patron, item)
-
-                if loan_allowed is True:
-                    print(f"\nLoan of {item._name} to {patron._name} approved.")
-                    self._data_manager.create_loan(patron_id, item_id)
-                else:
-                    print(f"\nLoan of {item._name} to {patron._name} denied.")
-                    print("Reason: " + loan_allowed)
-
-            self._current_screen = self._main_menu
-
-        return self._current_screen
-
-    def _return_item(self):
-        '''
-        The return item screen of BAT.
-        '''
-        print("\nRETURN ITEM")
-        print("===========")
-
-        patron_id = user_input.get_int_input(0, 999999999, "Enter patron ID: ")
-        patron = self._data_manager.get_patron_by_id(patron_id)
+        patron_id = user_input.get_int_input("Enter patron ID: ")
+        patron = search.search_patron_by_id(
+            self.data_manager._patron_data,
+            patron_id
+        )
 
         if patron is None:
-            print("Patron not found.")
-            self._current_screen = self._main_menu
+            print(f"Patron with ID {patron_id} not found.")
+            return
+
+        if not patron._loans:
+            print("Patron has no items on loan.")
+            return
+
+        print("\nCurrent loans:")
+        for loan in patron._loans:
+            print(f"  - ID: {loan._item._id}, Item: {loan._item}")
+
+        item_id = user_input.get_int_input(
+            "Enter item ID to return: "
+        )
+
+        result = self.business_logic.return_item(patron, item_id)
+
+        if result:
+            print("Item returned successfully.")
         else:
-            print(f"Patron found: {patron._name}")
+            print("Patron does not have this item on loan.")
 
-            loans = patron._loans
-            if not loans:
-                print("No items currently on loan.")
-            else:
-                print("\nItems currently on loan:")
-                for loan in loans:
-                    print(f"{loan._id}: {loan._item._name}")
+    def view_patron_details(self):
+        """Display detailed information about a patron."""
+        print("\n=== View Patron Details ===")
 
-                loan_id = user_input.get_int_input(0, 999999999, "Enter loan ID: ")
-                loan = self._data_manager.get_loan_by_id(loan_id)
-
-                if loan is None:
-                    print("Loan not found.")
-                else:
-                    print(f"\nReturn of {loan._item._name} by {patron._name} processed.")
-                    self._data_manager.return_loan(loan_id)
-
-            self._current_screen = self._main_menu
-
-        return self._current_screen
-
-    def _search_for_patron(self):
-        '''
-        The search for patron screen of BAT.
-        '''
-        print("\nSEARCH FOR PATRON")
-        print("=================")
-
-        print("How would you like to search?")
-        print("1. By name")
-        print("2. By age")
-
-        search_choice = user_input.get_int_input(1, 2)
-
-        match search_choice:
-            case 1:
-                search_term = user_input.get_string_input("Enter name to search for: ")
-                results = search.search_patrons_by_name(self._data_manager.get_patrons(), search_term)
-            case 2:
-                search_term = user_input.get_int_input(0, 150, "Enter age to search for: ")
-                results = search.search_patrons_by_age(self._data_manager.get_patrons(), search_term)
-
-        if not results:
-            print("No matching patrons found.")
-        else:
-            print("\nMatching patrons:")
-            for patron in results:
-                print(f"{patron._id}: {patron._name}, age {patron._age}")
-
-        input("\nPress enter to continue...")
-
-        self._current_screen = self._main_menu
-        return self._current_screen
-
-    def _register_patron(self):
-        '''
-        The register patron screen of BAT.
-        '''
-        print("\nREGISTER PATRON")
-        print("===============")
-
-        print("Enter patron details:")
-        name = user_input.get_string_input("Name: ")
-        age = user_input.get_int_input(0, 150, "Age: ")
-
-        patron = self._data_manager.create_patron(name, age)
-        print(f"\nPatron {patron._name} registered with ID {patron._id}.")
-
-        input("\nPress enter to continue...")
-
-        self._current_screen = self._main_menu
-        return self._current_screen
-
-    def _access_makerspace(self):
-        '''
-        The access makerspace screen of BAT.
-        '''
-        print("\nACCESS MAKERSPACE")
-        print("=================")
-
-        patron_id = user_input.get_int_input(0, 999999999, "Enter patron ID: ")
-        patron = self._data_manager.get_patron_by_id(patron_id)
+        patron_id = user_input.get_int_input("Enter patron ID: ")
+        patron = search.search_patron_by_id(
+            self.data_manager._patron_data,
+            patron_id
+        )
 
         if patron is None:
-            print("Patron not found.")
-            self._current_screen = self._main_menu
+            print(f"Patron with ID {patron_id} not found.")
+            return
+
+        print("\n" + "=" * 50)
+        print(patron.to_full_string())
+
+        overdue_fees = patron.calculate_overdue_fees()
+        if overdue_fees > 0:
+            print(f"Overdue fees: ${overdue_fees:.2f}")
+
+        print("=" * 50)
+
+    def pay_fees(self):
+        """Handle fee payment."""
+        print("\n=== Pay Fees ===")
+
+        patron_id = user_input.get_int_input("Enter patron ID: ")
+        patron = search.search_patron_by_id(
+            self.data_manager._patron_data,
+            patron_id
+        )
+
+        if patron is None:
+            print(f"Patron with ID {patron_id} not found.")
+            return
+
+        print(
+            f"Outstanding fees: "
+            f"${patron._outstanding_fees:.2f}"
+        )
+
+        if patron._outstanding_fees == 0:
+            print("No fees to pay.")
+            return
+
+        amount = user_input.get_float_input_in_range(
+            f"Enter amount to pay "
+            f"(max ${patron._outstanding_fees:.2f}): ",
+            0.01,
+            patron._outstanding_fees
+        )
+
+        remaining = patron.pay_fee(amount)
+
+        if remaining == 0:
+            print("Payment successful! No outstanding fees.")
         else:
-            print(f"Patron found: {patron._name}")
-
-            access_allowed = logic.check_makerspace_access(patron)
-
-            if access_allowed is True:
-                print(f"\n{patron._name} is allowed to access the makerspace.")
-            else:
-                print(f"\n{patron._name} is not allowed to access the makerspace.")
-                print("Reason: " + access_allowed)
-
-            input("\nPress enter to continue...")
-
-            self._current_screen = self._main_menu
-
-        return self._current_screen
-
-    def _quit(self):
-        '''
-        The quit menu screen of BAT. Saves the current state of patron and
-        catalogue data, overriting any existing data files.
-        '''
-        print("Bye...")
-        self._data_manager.save_patrons()
-        self._data_manager.save_catalogue()
-
-        return self._quit
+            print(
+                f"Payment successful! "
+                f"Remaining: ${remaining:.2f}"
+            )

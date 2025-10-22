@@ -1,31 +1,34 @@
-'''
-Author: Charlotte Pierce
+"""
+Module for Loan class.
+"""
 
-Assignment code for FIT2107 Software Quality and Testing.
-Not to be shared or distributed without permission.
-'''
+from datetime import datetime, timedelta
 
-class Loan():
-    '''
-    Represents a loan held by one of AAL's patrons.
-    Every loan has:
-    - a borrowable item that has been loaned
-    - a due date
-    '''
+
+class Loan:
+    """
+    Represents a loan of an item to a patron.
+    """
+
     def __init__(self, item, due_date):
-        '''
-        Create a new loan.
-            Args
-                item (BorrowableItem): the item being borrowed
-                due_date (datetime.Date): the date the item needs to be returned
-        '''
+        """
+        Initialize a Loan.
+
+        Args:
+            item: The BorrowableItem being loaned
+            due_date: The date the item is due to be returned
+        """
         self._item = item
-        self._due_date = due_date
+        if isinstance(due_date, str):
+            self._due_date = datetime.strptime(
+                due_date, "%Y-%m-%d"
+            ).date()
+        else:
+            self._due_date = due_date
 
     def __str__(self):
-        '''
-        Create and return a string representation of the loan.
-        '''
-        desc = f"Item {self._item._id}: {self._item._name} ({self._item._type}); due {self._due_date.strftime('%d/%m/%Y')}"
-
-        return desc
+        """String representation of the loan."""
+        return (
+            f"{self._item.to_short_string()} "
+            f"(due: {self._due_date})"
+        )

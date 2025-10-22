@@ -1,32 +1,33 @@
-'''
-Author: Charlotte Pierce
+"""
+Main entry point for the BAT (Borrowing Administration Tool) system.
+"""
 
-Assignment code for FIT2107 Software Quality and Testing.
-Not to be shared or distributed without permission.
-'''
-
-from src.bat_ui import BatUI
+from src.bat_ui import BatUi
+from src.business_logic import BusinessLogic
 from src.data_mgmt import DataManager
 
 
-class Bat():
-    '''
-    This class is responsible for initialising BAT data and executing
-    the BAT software.
-    '''
+class BorrowingAdministrationTool:
+    """
+    Main application class for the BAT system.
+    """
+    # pylint: disable=too-few-public-methods
+    # This is a main application class with a single run method
+
+    def __init__(self):
+        """Initialize the BAT system."""
+        self.data_manager = DataManager()
+        self.business_logic = BusinessLogic(self.data_manager)
+        self.user_interface = BatUi(
+            self.business_logic,
+            self.data_manager
+        )
+
     def run(self):
-        '''
-        Run BAT.
+        """Run the main application loop."""
+        self.user_interface.main_menu()
 
-        Creates an instance of the BAT software and a data manager with
-        patron and catalogue data loaded, then runs the main BAT execution
-        loop.
-        '''
-        data_manager = DataManager()
 
-        ui = BatUI(data_manager)
-        while ui.get_current_screen() != "QUIT":
-            ui.run_current_screen()
-
-        ui.run_current_screen()  # run the quit screen
-
+if __name__ == "__main__":
+    bat = BorrowingAdministrationTool()
+    bat.run()

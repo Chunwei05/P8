@@ -1,85 +1,92 @@
-'''
-Author: Charlotte Pierce
-
-Assignment code for FIT2107 Software Quality and Testing.
-Not to be shared or distributed without permission.
-'''
-
-def find_patron_by_name(name, patron_data):
-    '''
-    Find all the patrons with the given name.
-    Search is case insensitive.
-        Args:
-            name (string): the name to search for.
-            patron_data: the patron data to search (from a DataManager).
-        
-        Returns:
-            a list of patrons with the given name, or an empty list if
-            none were found.
-    '''
-    found = []
-
-    for patron in patron_data:
-        if patron._name == name:
-            found.append(patron)
-
-    return found
+"""
+Search functionality for patrons and items.
+"""
 
 
-def find_patron_by_age(age, patron_data):
-    '''
-    Find all the patrons with the given age.
-        Args:
-            age (int): the age to search for.
-            patron_data: the patron data to search (from a DataManager).
-        
-        Returns:
-            a list of patrons with the given age, or an empty list if
-            none were found.
-    '''
-    found = []
+def search_patron_by_name(patron_list, name):
+    """
+    Search for a patron by name.
 
-    for patron in patron_data:
-        if patron._age == age:
-            found.append(patron)
+    Args:
+        patron_list: List of Patron objects
+        name: Name to search for
 
-    return found
-
-
-def find_patron_by_name_and_age(name, age, patron_data):
-    '''
-    Find the patron with the given age. Assumes there are no two patrons
-    with the same name and age combination.
-        Args:
-            name (string): the name to search for.
-            age (int): the age to search for.
-            patron_data: the patron data to search (from a DataManager).
-        
-        Returns:
-            a patron with the given name and age, or None.
-    '''
-    # find the first patron in the database with the given name and age combo
-    for patron in patron_data:
-        if (patron._name.lower() == name.lower()) and (patron._age == age):
+    Returns:
+        Patron object if found, None otherwise
+    """
+    for patron in patron_list:
+        if patron._name.lower() == name.lower():
             return patron
-
     return None
 
 
-def find_item_by_id(item_id, catalogue_data):
-    '''
-    Find the item with the given ID.
-        Args:
-            item_id (int): the item ID to search for.
-            catalogue_data: the catalogue data to search (from a DataManager).
+def search_patron_by_id(patron_list, patron_id):
+    """
+    Search for a patron by ID.
 
-        Returns:
-            the item with the given ID, or None.
-    '''
-    found = None
+    Args:
+        patron_list: List of Patron objects
+        patron_id: ID to search for
 
-    for item in catalogue_data:
+    Returns:
+        Patron object if found, None otherwise
+    """
+    for patron in patron_list:
+        if patron._id == patron_id:
+            return patron
+    return None
+
+
+def search_patron_by_age(patron_list, age):
+    """
+    Search for patrons by age.
+
+    Args:
+        patron_list: List of Patron objects
+        age: Age to search for
+
+    Returns:
+        List of Patron objects matching the age
+    """
+    results = []
+    for patron in patron_list:
+        if patron._age == age:
+            results.append(patron)
+    return results
+
+
+def search_patron_by_name_and_age(patron_list, name, age):
+    """
+    Search for patrons by name and age.
+
+    Args:
+        patron_list: List of Patron objects
+        name: Name to search for
+        age: Age to search for
+
+    Returns:
+        List of Patron objects matching both criteria
+    """
+    results = []
+    for patron in patron_list:
+        if (patron._name.lower() == name.lower() and
+                patron._age == age):
+            results.append(patron)
+    return results
+
+
+def search_item_by_id(item_list, item_id):
+    """
+    Search for an item by ID.
+
+    Args:
+        item_list: List of BorrowableItem objects
+        item_id: ID to search for
+
+    Returns:
+        BorrowableItem object if found, None otherwise
+    """
+    for item in item_list:
         if item._id == item_id:
-            found = item
-
-    return found
+            return item
+    return None

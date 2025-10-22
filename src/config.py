@@ -1,9 +1,9 @@
-'''
-Author: Charlotte Pierce
+"""
+Configuration settings for the BAT system.
+"""
 
-Assignment code for FIT2107 Software Quality and Testing.
-Not to be shared or distributed without permission.
-'''
+CATALOGUE_FILE = "data/catalogue.json"
+PATRON_FILE = "data/patrons.json"
 
-PATRON_DATA = 'data/patrons.json'
-CATALOGUE_DATA = 'data/catalogue.json'
+MAX_LOANS = 4
+OVERDUE_FEE_PER_DAY = 1.0
