@@ -131,3 +131,20 @@ def get_yes_no_input(prompt):
         if line in ('y', 'n'):
             return line == 'y'
         print("Invalid input. Please enter 'y' or 'n'.")
+
+
+# Alias for backward compatibility with tests
+def read_integer_range(min_value, max_value, prompt="Enter a number: "):
+    """
+    Read an integer within a specified range.
+    Alias for get_int_input_in_range with different parameter order.
+
+    Args:
+        min_value: Minimum allowed value
+        max_value: Maximum allowed value
+        prompt: The prompt to display
+
+    Returns:
+        The validated integer within range
+    """
+    return get_int_input_in_range(prompt, min_value, max_value)

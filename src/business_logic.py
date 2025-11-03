@@ -209,32 +209,48 @@ def calculate_discount(age):
         age: Patron's age
 
     Returns:
-        float: Discount percentage (0-100)
+        str or float: "ERROR" for negative age, discount percentage (0-100) otherwise
     """
+    if age < 0:
+        return "ERROR"
     if age >= 90:
         return 100.0
+    if age >= 65:
+        return 15.0
     if age >= 50:
-        return 50.0
+        return 10.0
     return 0.0
 
 
-def can_borrow(patron_age, membership_length, fees_owed):
+def can_borrow(item_type, patron_age, membership_length, fees_owed,
+               gardening_tool_training, carpentry_tool_training):
     """
-    Check if a patron can borrow items.
+    Route to appropriate borrowing function based on item type.
 
     Args:
+        item_type: Type of item to borrow
         patron_age: Patron's age
         membership_length: Days of membership
         fees_owed: Outstanding fees
+        gardening_tool_training: Whether patron has gardening training
+        carpentry_tool_training: Whether patron has carpentry training
 
     Returns:
-        bool: True if patron can borrow
+        bool: True if patron can borrow the item
     """
-    if membership_length >= 56:
-        return False
-    discount = calculate_discount(patron_age)
-    discounted_fees = fees_owed * (1 - discount / 100)
-    return discounted_fees <= 0
+    item_type_lower = item_type.lower()
+
+    if item_type_lower == "book":
+        return can_borrow_book(patron_age, membership_length, fees_owed)
+    if item_type_lower == "gardening tool":
+        return can_borrow_gardening_tool(patron_age, membership_length,
+                                          fees_owed, gardening_tool_training)
+    if item_type_lower == "carpentry tool":
+        return can_borrow_carpentry_tool(patron_age, membership_length,
+                                          fees_owed, carpentry_tool_training)
+
+    # Unknown item types return False
+    return False
 
 
 def can_borrow_book(patron_age, membership_length, fees_owed):
@@ -249,7 +265,13 @@ def can_borrow_book(patron_age, membership_length, fees_owed):
     Returns:
         bool: True if patron can borrow a book
     """
-    return can_borrow(patron_age, membership_length, fees_owed)
+    if membership_length >= 56:
+        return False
+    discount = calculate_discount(patron_age)
+    if discount == "ERROR":
+        return False
+    discounted_fees = fees_owed * (1 - discount / 100)
+    return discounted_fees <= 0
 
 
 def can_borrow_gardening_tool(patron_age, membership_length, fees_owed,
@@ -268,9 +290,11 @@ def can_borrow_gardening_tool(patron_age, membership_length, fees_owed,
     """
     if not gardening_tool_training:
         return False
-    if membership_length >= 28:
+    if membership_length > 28:
         return False
     discount = calculate_discount(patron_age)
+    if discount == "ERROR":
+        return False
     discounted_fees = fees_owed * (1 - discount / 100)
     return discounted_fees <= 0
 
@@ -291,7 +315,7 @@ def can_borrow_carpentry_tool(patron_age, membership_length, fees_owed,
     """
     if not carpentry_tool_training:
         return False
-    if membership_length >= 28:
+    if membership_length > 14:
         return False
 
     # Complex condition: fees_owed > 0 OR patron_age <= 18 OR patron_age >= 90

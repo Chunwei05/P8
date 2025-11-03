@@ -21,6 +21,32 @@ class BatUI:
         """
         self.data_manager = data_manager
         self.business_logic = business_logic
+        self._current_screen = None
+
+    def get_current_screen(self):
+        """Get the current screen name."""
+        return self._current_screen
+
+    def _main_menu(self):
+        """
+        Display main menu and return the selected screen name.
+        Used for testing purposes.
+
+        Returns:
+            str: Name of the selected screen
+        """
+        choice = user_input.read_integer_range(1, 6, "Select an option (1-6): ")
+
+        screen_map = {
+            1: 'LOAN ITEM',
+            2: 'RETURN ITEM',
+            3: 'SEARCH FOR PATRON',
+            4: 'REGISTER PATRON',
+            5: 'ACCESS MAKERSPACE',
+            6: 'QUIT'
+        }
+
+        return screen_map.get(choice, None)
 
     def run(self):
         """Run the BAT system (alias for main_menu)."""
