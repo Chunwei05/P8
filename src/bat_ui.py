@@ -6,21 +6,25 @@ from src import user_input
 from src import search
 
 
-class BatUi:
+class BatUI:
     """
     User interface for the Borrowing Administration Tool.
     """
 
-    def __init__(self, business_logic, data_manager):
+    def __init__(self, data_manager, business_logic=None):
         """
         Initialize the UI.
 
         Args:
-            business_logic: BusinessLogic instance
             data_manager: DataManager instance
+            business_logic: BusinessLogic instance (optional)
         """
-        self.business_logic = business_logic
         self.data_manager = data_manager
+        self.business_logic = business_logic
+
+    def run(self):
+        """Run the BAT system (alias for main_menu)."""
+        self.main_menu()
 
     def main_menu(self):
         """Display and handle the main menu."""

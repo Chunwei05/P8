@@ -178,3 +178,158 @@ class BusinessLogic:
             return False, "Makerspace training required"
 
         return True, "Access granted"
+
+
+# Standalone functions for testing (wrapper functions around business logic)
+
+def type_of_patron(age):
+    """
+    Determine patron type based on age.
+
+    Args:
+        age: Patron's age
+
+    Returns:
+        str: Patron type ("ERROR", "Minor", "Adult", or "Elderly")
+    """
+    if age < 0:
+        return "ERROR"
+    if age < 18:
+        return "Minor"
+    if age >= 90:
+        return "Elderly"
+    return "Adult"
+
+
+def calculate_discount(age):
+    """
+    Calculate discount percentage based on age.
+
+    Args:
+        age: Patron's age
+
+    Returns:
+        float: Discount percentage (0-100)
+    """
+    if age >= 90:
+        return 100.0
+    if age >= 50:
+        return 50.0
+    return 0.0
+
+
+def can_borrow(patron_age, membership_length, fees_owed):
+    """
+    Check if a patron can borrow items.
+
+    Args:
+        patron_age: Patron's age
+        membership_length: Days of membership
+        fees_owed: Outstanding fees
+
+    Returns:
+        bool: True if patron can borrow
+    """
+    if membership_length >= 56:
+        return False
+    discount = calculate_discount(patron_age)
+    discounted_fees = fees_owed * (1 - discount / 100)
+    return discounted_fees <= 0
+
+
+def can_borrow_book(patron_age, membership_length, fees_owed):
+    """
+    Check if a patron can borrow a book.
+
+    Args:
+        patron_age: Patron's age
+        membership_length: Days of membership
+        fees_owed: Outstanding fees
+
+    Returns:
+        bool: True if patron can borrow a book
+    """
+    return can_borrow(patron_age, membership_length, fees_owed)
+
+
+def can_borrow_gardening_tool(patron_age, membership_length, fees_owed,
+                               gardening_tool_training):
+    """
+    Check if a patron can borrow a gardening tool.
+
+    Args:
+        patron_age: Patron's age
+        membership_length: Days of membership
+        fees_owed: Outstanding fees
+        gardening_tool_training: Whether patron has training
+
+    Returns:
+        bool: True if patron can borrow a gardening tool
+    """
+    if not gardening_tool_training:
+        return False
+    if membership_length >= 28:
+        return False
+    discount = calculate_discount(patron_age)
+    discounted_fees = fees_owed * (1 - discount / 100)
+    return discounted_fees <= 0
+
+
+def can_borrow_carpentry_tool(patron_age, membership_length, fees_owed,
+                               carpentry_tool_training):
+    """
+    Check if a patron can borrow a carpentry tool.
+
+    Args:
+        patron_age: Patron's age
+        membership_length: Days of membership
+        fees_owed: Outstanding fees
+        carpentry_tool_training: Whether patron has training
+
+    Returns:
+        bool: True if patron can borrow a carpentry tool
+    """
+    if not carpentry_tool_training:
+        return False
+    if membership_length >= 28:
+        return False
+
+    # Complex condition: fees_owed > 0 OR patron_age <= 18 OR patron_age >= 90
+    if fees_owed > 0 or patron_age <= 18 or patron_age >= 90:
+        return False
+
+    return True
+
+
+def can_use_makerspace(patron_age, outstanding_fees, makerspace_training):
+    """
+    Check if a patron can use the makerspace.
+
+    Args:
+        patron_age: Patron's age
+        outstanding_fees: Outstanding fees
+        makerspace_training: Whether patron has makerspace training
+
+    Returns:
+        bool: True if patron can use makerspace
+    """
+    patron_type = type_of_patron(patron_age)
+
+    # Error or non-adult patrons cannot use makerspace
+    if patron_type == "ERROR":
+        return False
+    if patron_type in ["Minor", "Elderly"]:
+        return False
+
+    # Must have training
+    if not makerspace_training:
+        return False
+
+    # Check fees after discount
+    discount = calculate_discount(patron_age)
+    discounted_fees = outstanding_fees * (1 - discount / 100)
+
+    if discounted_fees > 0:
+        return False
+
+    return True

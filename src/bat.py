@@ -1,7 +1,7 @@
 """
 Main entry point for the BAT (Borrowing and Access Tracking) system.
 """
-from src.bat_ui import BatUi
+from src.bat_ui import BatUI
 from src.business_logic import BusinessLogic
 from src.data_mgmt import DataManager
 
@@ -12,7 +12,7 @@ def main():
     """
     data_manager = DataManager()
     business_logic = BusinessLogic()
-    ui = BatUi(data_manager, business_logic)
+    ui = BatUI(data_manager, business_logic)
     ui.run()
 
 
