@@ -1,43 +1,73 @@
-name: BAT Tests and Static Analysis
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
-  test-and-analyze:
+  test:
+    name: Run Tests
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
-    
+        python-version: '3.x'
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pylint pycodestyle pytest
+        pip install pytest pytest-cov
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    
+
     - name: Run pytest
       run: |
-        pytest -v || true
-      continue-on-error: true
-    
+        echo "==================== PYTEST REPORT ===================="
+        pytest tests/ -v --tb=short
+
+    - name: Display test summary
+      if: always()
+      run: |
+        echo "Test execution completed. Check results above."
+
+  lint:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install linting tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install pylint pycodestyle
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
     - name: Run pylint
       run: |
         echo "==================== PYLINT REPORT ===================="
-        pylint *.py --score=y --exit-zero || true
-      continue-on-error: true
-    
+        pylint run.py src/ --score=y --exit-zero
+      continue-on-error: false
+
     - name: Run pycodestyle
       run: |
         echo "==================== PYCODESTYLE REPORT ===================="
-        pycodestyle . --statistics || true
-      continue-on-error: true
+        pycodestyle run.py src/ tests/ --statistics --max-line-length=100
+      continue-on-error: false
+
+    - name: Display lint summary
+      if: always()
+      run: |
+        echo "Static analysis completed. Check results above."
